@@ -1,0 +1,38 @@
+app: captcha-solver-api
+service: default
+runtime: python312
+
+env_variables:
+  FLASK_ENV: production
+  PORT: 8080
+
+automatic_scaling:
+  min_instances: 0
+  max_instances: 10
+  target_cpu_utilization: 0.6
+  target_throughput_utilization: 0.6
+
+resources:
+  cpu: 2
+  memory_gb: 2
+  disk_size_gb: 10
+
+handlers:
+- url: /health
+  script: resolveCaptcha.app
+  methods: [GET]
+  
+- url: /solve-captcha
+  script: resolveCaptcha.app
+  methods: [POST]
+  
+- url: /solve-captcha-batch
+  script: resolveCaptcha.app
+  methods: [POST]
+
+- url: /.*
+  script: resolveCaptcha.app
+  methods: [GET, POST, PUT, DELETE]
+
+# Timeout cho requests (5 phút)
+instance_class: F4_1G
