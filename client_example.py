@@ -139,7 +139,8 @@ def main():
     """Main function"""
     print("🔧 Captcha Puzzle Solver - Client Test")
     
-    base_url = "http://localhost:5000"
+    # base_url = "https://captcha-185046619914.europe-west1.run.app"
+    base_url = "http://localhost:5000"  # Local testing, change to your API URL
     
     # Test health check
     if not test_api_health(base_url):
