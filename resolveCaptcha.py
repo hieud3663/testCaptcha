@@ -866,7 +866,7 @@ curl -X POST http://localhost:8080/solve-captcha \\
             'keepalive': 5,
             'max_requests': 1000,
             'max_requests_jitter': 100,
-            'log_level': 'info'
+            'loglevel': 'info'
         }
         
         StandaloneApplication(app, options).run()
@@ -903,40 +903,33 @@ def test_with_local_image(image_path):
 if __name__ == "__main__":
     import sys
     
-    if len(sys.argv) > 1:
-        command = sys.argv[1].lower()
+    if len(sys.argv) == 1:
+        # Chạy API server với cấu hình mặc định
+        run_api_server(host='0.0.0.0', port=8080, debug=False)
+    
+    elif sys.argv[1] == "api":
+        # Chạy API server
+        host = sys.argv[2] if len(sys.argv) > 2 else '0.0.0.0'
+        port = int(sys.argv[3]) if len(sys.argv) > 3 else 8080
+        debug = len(sys.argv) > 4 and sys.argv[4].lower() == 'debug'
         
-        if command == 'api':
-            # Chạy API server
-            host = sys.argv[2] if len(sys.argv) > 2 else '0.0.0.0'
-            port = int(sys.argv[3]) if len(sys.argv) > 3 else int(os.environ.get('PORT', 8080))
-            debug = os.environ.get('FLASK_ENV') != 'production'
-            run_api_server(host=host, port=port, debug=debug)
-            
-        elif command == 'test':
-            # Test với ảnh local
-            image_path = sys.argv[2] if len(sys.argv) > 2 else 'image.png'
-            test_with_local_image(image_path)
-            
-        elif command == 'solve':
-            # Xử lý trực tiếp
-            image_path = sys.argv[2] if len(sys.argv) > 2 else 'image.png'
-            x, y = find_puzzle_gap_ultimate_precision(image_path)
-            
-            if x is not None and y is not None:
-                print(f"\n🏆 HOÀN THÀNH SIÊU CHÍNH XÁC!")
-                print(f"Kết quả cuối cùng: ({x-18}, {y})")
-            else:
-                print("❌ Thất bại")
-        else:
-            print("❌ Lệnh không hợp lệ!")
-            print("Sử dụng:")
-            print("  python resolveCaptcha.py api [host] [port]     - Chạy API server")
-            print("  python resolveCaptcha.py test [image_path]     - Test với ảnh local")
-            print("  python resolveCaptcha.py solve [image_path]    - Xử lý trực tiếp")
-    else:
-        # Mặc định: xử lý trực tiếp
-        main_image = "image.png"
+        run_api_server(host=host, port=port, debug=debug)
+    
+    elif sys.argv[1] == "test" and len(sys.argv) > 2:
+        # Test với ảnh local
+        image_path = sys.argv[2]
+        test_with_local_image(image_path)
+    
+    elif sys.argv[1] == "solve" and len(sys.argv) > 2:
+        # Xử lý trực tiếp
+        main_image = sys.argv[2]
+        
+        if not os.path.exists(main_image):
+            print(f"❌ Không tìm thấy file: {main_image}")
+            sys.exit(1)
+        
+        print("🔍 THUẬT TOÁN SIÊU CHÍNH XÁC")
+        print(f"📷 Xử lý ảnh: {main_image}")
         
         x, y = find_puzzle_gap_ultimate_precision(main_image)
         
@@ -945,3 +938,9 @@ if __name__ == "__main__":
             print(f"Kết quả cuối cùng: ({x-18}, {y})")
         else:
             print("❌ Thất bại")
+    else:
+        print("Cách sử dụng:")
+        print("  python resolveCaptcha.py                    # Chạy API server (port 8080)")
+        print("  python resolveCaptcha.py api [host] [port]  # Chạy API server")
+        print("  python resolveCaptcha.py test image.png     # Test với ảnh local")
+        print("  python resolveCaptcha.py solve image.png    # Xử lý trực tiếp")
