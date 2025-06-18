@@ -1,5 +1,5 @@
-# Sử dụng Python 3.12 slim image
-FROM python:3.12-slim
+# Sử dụng Python 3.11 thay vì 3.12 để tránh lỗi setuptools
+FROM python:3.11-slim
 
 # Cài đặt system dependencies
 RUN apt-get update && apt-get install -y \
@@ -24,8 +24,8 @@ WORKDIR /app
 # Copy requirements trước để cache layer
 COPY requirements.txt .
 
-# Cài đặt setuptools và wheel trước
-RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+# Cài đặt pip, setuptools và wheel mới nhất trước
+RUN pip install --no-cache-dir --upgrade pip==23.3.1 setuptools==69.0.2 wheel==0.42.0
 
 # Cài đặt Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt

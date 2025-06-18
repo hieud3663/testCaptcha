@@ -1,6 +1,6 @@
 app: captcha-solver-api
 service: default
-runtime: python312
+runtime: python311
 
 env_variables:
   FLASK_ENV: production
