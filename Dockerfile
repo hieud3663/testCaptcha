@@ -14,6 +14,8 @@ RUN apt-get update && apt-get install -y \
     libavcodec-dev \
     libavformat-dev \
     libswscale-dev \
+    build-essential \
+    gcc \
     && rm -rf /var/lib/apt/lists/*
 
 # Tạo working directory
@@ -21,6 +23,9 @@ WORKDIR /app
 
 # Copy requirements trước để cache layer
 COPY requirements.txt .
+
+# Cài đặt setuptools và wheel trước
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 
 # Cài đặt Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt

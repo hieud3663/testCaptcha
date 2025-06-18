@@ -1,4 +1,6 @@
 # Captcha Puzzle Solver dependencies
+setuptools>=68.0.0
+wheel>=0.41.0
 Flask==3.0.0
 Werkzeug==3.0.1
 Pillow==10.1.0
